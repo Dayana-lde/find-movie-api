@@ -96,3 +96,41 @@ genreSelect.addEventListener("change", () => {
     getMovies(API_URL_POPULAR);
   }
 });
+// Отображение фильмов
+function showMovies() {
+  const moviesEl = document.querySelector(".movies");
+  moviesEl.innerHTML = "";
+
+  const start = (currentPage - 1) * moviesPerPage;
+  const end = start + moviesPerPage;
+  const moviesToShow = allMovies.slice(start, end);
+
+  moviesToShow.forEach((movie) => {
+    const movieEl = document.createElement("div");
+    movieEl.classList.add("movie");
+    movieEl.innerHTML = `
+      <div class="movie__cover-inner">
+        <img src="${movie.posterUrlPreview}" class="movie__cover" alt="${movie.nameRu}" />
+        <div class="movie__cover--darkened"></div>
+      </div>
+      <div class="movie__info">
+        <div class="movie__title">${movie.nameRu}</div>
+        <div class="movie__category">${movie.genres.map((genre) => ` ${genre.genre}`).join("")}</div>
+        ${
+          movie.rating
+            ? `<div class="movie__average movie__average--${getClassByRate(movie.rating)}">${movie.rating}</div>`
+            : ""
+        }
+      </div>
+    `;
+    movieEl.addEventListener("click", () => openModal(movie.filmId));
+    moviesEl.appendChild(movieEl);
+  });
+}
+
+// Классы цвета рейтинга
+function getClassByRate(vote) {
+  if (vote >= 7) return "green";
+  else if (vote > 5) return "orange";
+  else return "red";
+}
