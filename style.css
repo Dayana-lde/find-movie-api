@@ -34,6 +34,28 @@ body {
 color: #0eefff;
 }
 
+.filter-form {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+.pagination__button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  background-color: #222;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.pagination__button.active {
+  background-color: orange;
+}
+
 .header__search {
   padding: 8px;
   border: 2px solid #000000;
