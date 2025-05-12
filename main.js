@@ -37,3 +37,62 @@ async function getMovies(url, type = "auto") {
   setupPagination();
 }
 
+// Поиск по ключевому слову
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const keyword = search.value.trim();
+  if (keyword) {
+    getMovies(`${API_URL_SEARCH}${keyword}`, "search");
+    search.value = "";
+    genreSelect.value = ""; // Сброс жанра
+  }
+});
+
+// Рандомные фильмы по клику на логотип
+logo.addEventListener("click", async (e) => {
+  e.preventDefault();
+  const resp = await fetch(API_URL_POPULAR, {
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": API_KEY,
+    },
+  });
+  const data = await resp.json();
+  const shuffled = data.films.sort(() => 0.5 - Math.random());
+  allMovies = shuffled.slice(0, 20); // немного больше для пагинации
+  currentPage = 1;
+  showMovies();
+  setupPagination();
+  genreSelect.value = "";
+  search.value = "";
+});
+
+// Загрузка жанров
+async function loadGenres() {
+  const resp = await fetch(API_URL_GENRES, {
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": API_KEY,
+    },
+  });
+  const data = await resp.json();
+
+  data.genres.forEach((genre) => {
+    const option = document.createElement("option");
+    option.value = genre.id;
+    option.textContent = genre.genre;
+    genreSelect.appendChild(option);
+  });
+}
+
+// Событие при выборе жанра
+genreSelect.addEventListener("change", () => {
+  const selectedGenre = genreSelect.value;
+  search.value = "";
+  if (selectedGenre) {
+    const url = `${API_URL_BY_GENRE}?genres=${selectedGenre}&page=1`;
+    getMovies(url, "genre");
+  } else {
+    getMovies(API_URL_POPULAR);
+  }
+});
